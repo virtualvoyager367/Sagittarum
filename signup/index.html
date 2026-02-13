@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign up - Sagittarum</title>
+  <style>
+:root{--primary-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 100%);--color-primary:#667eea;--color-text:#1f2937;--color-text-light:#6b7280;--color-white:#fff;--color-gray-200:#e5e7eb;--color-gray-300:#d1d5db;--radius-lg:.75rem;--radius-md:.5rem;--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);color:var(--color-text);min-height:100vh}
+a{color:var(--color-primary);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+input{font-family:inherit;outline:none}
+input:focus{outline:2px solid var(--color-primary);outline-offset:2px}
+.card{background:var(--color-white);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow-lg)}
+.btn{font-weight:600;border-radius:var(--radius-lg);padding:.75rem;cursor:pointer;background:var(--primary-gradient);color:var(--color-white)}
+.signup-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;position:relative}
+.signup-page__bg{position:absolute;inset:0;background:radial-gradient(ellipse at top right,rgba(102,126,234,.2) 0%,transparent 50%);z-index:0}
+.signup-page__content{position:relative;z-index:1;width:100%;max-width:420px}
+.signup-card__header{text-align:center;margin-bottom:1.5rem}
+.signup-card__title{background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:2.25rem;font-weight:700}
+.signup-card__subtitle{color:var(--color-text-light)}
+.signup-card__form{display:flex;flex-direction:column;gap:1rem}
+.signup-card__field label{display:block;font-weight:600;font-size:.875rem;margin-bottom:.25rem}
+.signup-card__field input{width:100%;padding:.75rem;border:2px solid var(--color-gray-200);border-radius:var(--radius-lg)}
+.signup-card__radio-group{display:flex;gap:1.5rem}
+.signup-card__radio{display:flex;align-items:center;gap:.5rem;cursor:pointer;font-weight:500}
+.signup-card__response-wrapper{border:2px solid var(--color-gray-300);border-radius:var(--radius-md);overflow:hidden;background:#fafafa;min-height:60px}
+.signup-card__response-frame{display:block;width:100%;min-height:60px;border:none;background:#fafafa}
+.signup-card__footer{text-align:center;font-size:.875rem;color:var(--color-text-light)}
+.signup-card__link{color:#2563eb;font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="signup-page">
+    <div class="signup-page__bg"></div>
+    <div class="signup-page__content">
+      <a href="../" class="signup-card__back" style="display:block;margin-bottom:1rem;color:var(--color-text-light);font-size:.875rem">&larr; Back to Sagittarum</a>
+      <div class="card">
+        <div class="signup-card__header">
+          <h1 class="signup-card__title">Sagittarum</h1>
+          <p class="signup-card__subtitle">Create an account</p>
+        </div>
+        <form id="signupForm" class="signup-card__form">
+          <div class="signup-card__field">
+            <label for="name">Name</label>
+            <input id="name" type="text" required placeholder="Enter your full name" />
+          </div>
+          <div class="signup-card__field">
+            <label for="email">Email</label>
+            <input id="email" type="email" required placeholder="Enter your email" />
+          </div>
+          <div class="signup-card__field">
+            <label for="password">Password</label>
+            <input id="password" type="password" required minlength="6" placeholder="Enter password (min 6 characters)" />
+          </div>
+          <div class="signup-card__field">
+            <label for="confirmPassword">Confirm Password</label>
+            <input id="confirmPassword" type="password" required minlength="6" placeholder="Confirm your password" />
+          </div>
+          <div class="signup-card__field">
+            <label>Account type</label>
+            <div class="signup-card__radio-group">
+              <label class="signup-card__radio"><input type="radio" name="accountType" value="student" checked /> Student</label>
+              <label class="signup-card__radio"><input type="radio" name="accountType" value="teacher" /> Teacher</label>
+            </div>
+          </div>
+          <button type="submit" class="btn">Sign up</button>
+          <div id="responseWrapper" class="signup-card__response-wrapper" style="display:none">
+            <iframe id="responseFrame" title="API Response" class="signup-card__response-frame" sandbox="allow-same-origin"></iframe>
+          </div>
+          <p class="signup-card__footer">Already have an account? <a href="../signin/" class="signup-card__link">Sign in</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+(function(){
+var SK='sagittarum_session',D=7*24*60*60*1000;
+window.Sagittarum=window.Sagittarum||{};
+window.Sagittarum.session={saveSession:function(u){localStorage.setItem(SK,JSON.stringify({user:u,expiresAt:Date.now()+D}))},getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}};
+window.Sagittarum.auth={signup:function(n,e,p,r){return new Promise(function(res){setTimeout(function(){if(n&&e&&p&&r){res({success:true,user:{id:'u'+Date.now(),username:e.split('@')[0],email:e,role:r==='teacher'?'teacher':'student',name:(n||'').trim()}})}else res({success:false})},500)})}};
+var user=window.Sagittarum.session.getCurrentUser();
+if(user){location.href=user.role==='teacher'?'../teacher/':'../student/';return}
+var form=document.getElementById('signupForm'),rw=document.getElementById('responseWrapper'),rf=document.getElementById('responseFrame');
+form.onsubmit=function(e){e.preventDefault();rw.style.display='none';var n=document.getElementById('name').value.trim(),em=document.getElementById('email').value.trim(),p=document.getElementById('password').value,cp=document.getElementById('confirmPassword').value,ac=form.querySelector('input[name="accountType"]:checked').value;
+if(p!==cp||p.length<6){rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">Failed</pre>';rw.style.display='block';return}
+var btn=form.querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Creating account...';
+window.Sagittarum.auth.signup(n,em,p,ac).then(function(r){btn.disabled=false;btn.textContent='Sign up';rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">'+(r.success?'Success':'Failed')+'</pre>';rw.style.display='block';if(r.success){window.Sagittarum.session.saveSession(r.user);setTimeout(function(){location.href=r.user.role==='teacher'?'../teacher/':'../student/'},500)}})}
+})();
+  </script>
+</body>
+</html>

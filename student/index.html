@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard - Sagittarum</title>
+  <style>
+:root{--primary-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 100%);--color-primary:#667eea;--color-text:#1f2937;--color-text-light:#6b7280;--color-white:#fff;--color-gray-100:#f3f4f6;--color-gray-200:#e5e7eb;--radius-lg:.75rem;--radius-md:.5rem;--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);color:var(--color-text);min-height:100vh}
+a{color:var(--color-primary)}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+.card{background:var(--color-white);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow-lg);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-xl)}
+.btn{font-weight:600;border-radius:var(--radius-lg);padding:.75rem;cursor:pointer;background:var(--primary-gradient);color:var(--color-white)}
+.btn-outline{background:transparent;color:var(--color-primary);border:2px solid var(--color-primary)}
+.navbar{background:var(--color-white);box-shadow:0 4px 6px rgba(0,0,0,.1);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.navbar__title{background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:1.75rem;font-weight:700;text-decoration:none}
+.btn-sm{padding:.375rem .75rem;font-size:.875rem}
+.page-content{padding:1.5rem;max-width:1200px;margin:0 auto}
+.page-content__header{margin-bottom:2rem;text-align:center}
+.page-content__title{background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:2rem}
+.class-grid,.assign-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem}
+.class-card__name,.assign-card__title{font-size:1.25rem;font-weight:600}
+.class-card__teacher{color:var(--color-text-light);font-size:.875rem}
+.class-card__stats{display:flex;gap:.75rem;margin-top:.75rem}
+.class-card__stat{font-size:.75rem;color:var(--color-text-light);padding:.25rem .5rem;background:var(--color-gray-100);border-radius:var(--radius-md)}
+.assign-card__header{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem}
+.assign-card__detail{display:flex;justify-content:space-between;font-size:.875rem;margin-top:.5rem}
+.badge{display:inline-flex;padding:.25rem .5rem;border-radius:var(--radius-md);font-size:.75rem;font-weight:600}
+.badge-success{background:linear-gradient(135deg,#10b981,#059669);color:#fff}
+.badge-warning{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff}
+.badge-default{background:var(--color-gray-200)}
+.back-btn{margin-bottom:1rem;color:var(--color-primary);font-weight:500}
+.assignment-detail__section{margin-bottom:1.5rem}
+.assignment-detail__textarea{width:100%;min-height:150px;padding:1rem;border:2px solid var(--color-gray-200);border-radius:var(--radius-lg);font-family:monospace;font-size:.875rem}
+.result-card__score{font-size:3rem;font-weight:700;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin:1rem 0}
+.discuss-panel{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100;padding:1rem}
+.discuss-panel__content{max-width:500px;max-height:80vh;overflow-y:auto}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="../" class="navbar__title">Sagittarum</a>
+    <div><span id="navUser"></span> <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Logout</button></div>
+  </nav>
+  <main id="appContent" class="page-content"></main>
+  <script>
+;(function(){
+var SK='sagittarum_session',D=7*24*60*60*1000;
+window.Sagittarum=window.Sagittarum||{};
+window.Sagittarum.session={getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}};
+var mockClassrooms=[{id:'class_1',name:'Introduction to Computer Science',teacher:'Dr. Sarah Johnson',studentCount:25,assignmentCount:3},{id:'class_2',name:'Advanced Algorithms',teacher:'Prof. Michael Chen',studentCount:18,assignmentCount:5},{id:'class_3',name:'Data Structures',teacher:'Dr. Sarah Johnson',studentCount:30,assignmentCount:4}];
+var mockAssignments={class_1:[{id:'assign_1',title:'Binary Search Implementation',totalPoints:100,dueDate:'2024-02-15',status:'graded',score:85,maxScore:100},{id:'assign_2',title:'Sorting Algorithms Analysis',totalPoints:100,dueDate:'2024-02-20',status:'attempted',score:null,maxScore:100},{id:'assign_3',title:'Tree Traversal Problems',totalPoints:100,dueDate:'2024-02-25',status:'not_started',score:null,maxScore:100}],class_2:[{id:'assign_4',title:'Dynamic Programming Challenge',totalPoints:150,dueDate:'2024-02-18',status:'graded',score:142,maxScore:150}],class_3:[{id:'assign_5',title:'Hash Table Implementation',totalPoints:100,dueDate:'2024-02-22',status:'not_started',score:null,maxScore:100}]};
+var mockAssignmentDetails={assign_1:{id:'assign_1',title:'Binary Search Implementation',instructions:'Implement a binary search algorithm that finds the index of a target value in a sorted array. Return -1 if not found.',totalPoints:100,gradingCriteria:[{criterion:'Correctness',points:50},{criterion:'Edge case handling',points:30},{criterion:'Code quality',points:20}],dueDate:'2024-02-15'}};
+var mockSubmissionResults={assign_1:{submission:'function binarySearch(arr, target) {\n  let left = 0;\n  let right = arr.length - 1;\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}',score:85,maxScore:100,aiTeacherExplanation:'Good implementation of binary search. Minor deduction for not including input validation.',aiStudentExplanation:'Your binary search implementation is correct! Consider adding input validation.'}};
+window.Sagittarum.mockData={getClassrooms:function(){return mockClassrooms},getAssignments:function(c){return mockAssignments[c]||[]},getAssignmentDetail:function(i){return mockAssignmentDetails[i]||null},getSubmissionResult:function(i){return mockSubmissionResults[i]||null}};
+var session=window.Sagittarum.session,mock=window.Sagittarum.mockData,user=session.getCurrentUser();
+if(!user||user.role!=='student'){location.href='../';return}
+document.getElementById('navUser').textContent=user.name+' (student)';
+document.getElementById('logoutBtn').onclick=function(){session.clearSession();location.href='../'};
+var submitted=JSON.parse(sessionStorage.getItem('sagittarum_submitted')||'[]');
+function markSub(id){if(submitted.indexOf(id)===-1){submitted.push(id);sessionStorage.setItem('sagittarum_submitted',JSON.stringify(submitted))}}
+function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function render(){var hash=(location.hash||'#').slice(1),parts=hash?hash.split('/'):[],content=document.getElementById('appContent');
+if(parts[0]==='class'&&parts[2]==='assignment'){renderAssign(content,parts[1],parts[3])}else if(parts[0]==='class'){renderClass(content,parts[1])}else{renderDash(content)}}
+function renderDash(c){var cls=mock.getClassrooms();c.innerHTML='<div class="page-content__header"><h1 class="page-content__title">Sagittarum</h1><p>Your Classes</p></div><div class="class-grid">'+cls.map(function(x){return'<div class="card class-card" data-class="'+x.id+'"><div class="class-card__name">'+esc(x.name)+'</div><div class="class-card__teacher">Teacher: '+esc(x.teacher)+'</div><div class="class-card__stats"><span class="class-card__stat">'+x.assignmentCount+' Assignment(s)</span><span class="class-card__stat">'+x.studentCount+' Student(s)</span></div></div>'}).join('')+'</div>';c.querySelectorAll('.class-card').forEach(function(el){el.onclick=function(){location.hash='#class/'+el.dataset.class}})};
+function renderClass(c,classId){var cls=mock.getClassrooms().filter(function(x){return x.id===classId})[0];if(!cls){c.innerHTML='<div class="card"><p>Class not found.</p><a href="#">Back</a></div>';return}var assigns=mock.getAssignments(classId),badge=function(s){if(s==='graded')return'<span class="badge badge-success">Graded</span>';if(s==='attempted')return'<span class="badge badge-warning">In Review</span>';return'<span class="badge badge-default">Not Started</span>'};c.innerHTML='<button class="back-btn" id="b1">&larr; Back</button><div class="card" style="margin-bottom:1.5rem"><h1>'+esc(cls.name)+'</h1><p class="class-card__teacher">Teacher: '+esc(cls.teacher)+'</p></div><h2 style="margin-bottom:1rem">Assignments</h2><div class="assign-grid">'+assigns.map(function(a){return'<div class="card assign-card" data-class="'+classId+'" data-assign="'+a.id+'"><div class="assign-card__header"><div class="assign-card__title">'+esc(a.title)+'</div>'+badge(a.status)+'</div><div class="assign-card__detail"><span>Total: '+a.totalPoints+'</span>'+(a.score!=null?'<span>'+a.score+'/'+a.maxScore+'</span>':'<span>Due: '+new Date(a.dueDate).toLocaleDateString()+'</span>')+'</div></div>'}).join('')+'</div>';document.getElementById('b1').onclick=function(){location.hash=''};c.querySelectorAll('.assign-card').forEach(function(el){el.onclick=function(){location.hash='#class/'+el.dataset.class+'/assignment/'+el.dataset.assign}})};
+function renderAssign(c,classId,assignId){var detail=mock.getAssignmentDetail(assignId),result=mock.getSubmissionResult(assignId);if(!detail){c.innerHTML='<div class="card"><p>Assignment not found.</p><a href="#class/'+classId+'">Back</a></div>';return}if(!result&&submitted.indexOf(assignId)!==-1)result={score:0,maxScore:detail.totalPoints,aiTeacherExplanation:'Submission received.',aiStudentExplanation:'Your work has been submitted.'};var sub=!!result,cr=detail.gradingCriteria.map(function(x){return'<li><strong>'+esc(x.criterion)+'</strong>: '+x.points+' pts</li>'}).join(''),rh='';if(sub&&result)rh='<div class="card assignment-detail__section"><h2>Result</h2><div class="result-card__score">'+result.score+' / '+result.maxScore+'</div><p>'+esc(result.aiTeacherExplanation)+'</p><button class="btn" id="discussBtn">Discuss Mistakes</button></div>';else rh='<div class="card assignment-detail__section"><h2>Your Submission</h2><textarea class="assignment-detail__textarea" id="subText" placeholder="Enter your submission..."></textarea><button class="btn" id="subBtn" style="margin-top:1rem">Submit</button></div>';c.innerHTML='<button class="back-btn" id="b2">&larr; Back</button><div class="card" style="margin-bottom:1.5rem"><h1>'+esc(detail.title)+'</h1><p>Total: '+detail.totalPoints+' | Due: '+new Date(detail.dueDate).toLocaleDateString()+'</p></div><div class="card assignment-detail__section"><h2>Instructions</h2><p>'+esc(detail.instructions)+'</p><h3>Grading Criteria</h3><ul>'+cr+'</ul></div>'+rh;document.getElementById('b2').onclick=function(){location.hash='#class/'+classId};if(sub&&result){var te=esc(result.aiTeacherExplanation),se=esc(result.aiStudentExplanation);document.getElementById('discussBtn').onclick=function(){var p=document.createElement('div');p.className='discuss-panel';p.innerHTML='<div class="card discuss-panel__content"><h2>Discuss Mistakes</h2><h3>AI Teacher</h3><p>'+te+'</p><h3>AI Student</h3><p>'+se+'</p><button class="btn" id="closeD">Close</button></div>';document.body.appendChild(p);p.querySelector('#closeD').onclick=function(){p.remove()};p.onclick=function(e){if(e.target===p)p.remove()}};}else{document.getElementById('subBtn').onclick=function(){if(document.getElementById('subText').value.trim()){markSub(assignId);render()}};}}
+window.onhashchange=render;render();
+})();
+  </script>
+</body>
+</html>

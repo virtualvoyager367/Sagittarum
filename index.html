@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sagittarum - AI Grading Platform</title>
+  <style>
+:root{--primary-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 100%);--color-primary:#667eea;--color-secondary:#764ba2;--color-text:#1f2937;--color-text-light:#6b7280;--color-white:#fff;--radius-lg:.75rem;--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,.1)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);color:var(--color-text);line-height:1.7;min-height:100vh}
+a{color:var(--color-primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.company-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;position:relative;text-align:center}
+.company-page__bg{position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(102,126,234,.15) 0%,transparent 50%),radial-gradient(ellipse at bottom right,rgba(245,87,108,.15) 0%,transparent 50%);z-index:0}
+.company-page__content{position:relative;z-index:1;max-width:640px}
+.company-page__logo{background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:3.5rem;font-weight:700;margin-bottom:0.5rem}
+.company-page__tagline{color:var(--color-text-light);font-size:1.25rem;margin-bottom:2rem}
+.company-page__about{margin-bottom:2rem;text-align:left}
+.company-page__about h2{font-size:1.5rem;margin-bottom:1rem;color:var(--color-text)}
+.company-page__about p{margin-bottom:1rem;color:var(--color-text);font-size:1.05rem}
+.company-page__buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2rem}
+.btn{font-weight:600;border-radius:var(--radius-lg);padding:0.75rem 1.5rem;cursor:pointer;text-decoration:none;display:inline-block;transition:transform .2s;border:none;font-size:1rem}
+.btn-primary{background:var(--primary-gradient);color:var(--color-white);box-shadow:var(--shadow-lg)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-xl)}
+.btn-outline{background:transparent;color:var(--color-primary);border:2px solid var(--color-primary)}
+.btn-outline:hover{background:var(--color-primary);color:var(--color-white);transform:translateY(-2px)}
+  </style>
+</head>
+<body>
+  <div class="company-page">
+    <div class="company-page__bg"></div>
+    <div class="company-page__content">
+      <h1 class="company-page__logo">Sagittarum</h1>
+      <p class="company-page__tagline">AI-Powered Grading for Educators and Students</p>
+      <div class="company-page__about">
+        <h2>About Sagittarum</h2>
+        <p>Sagittarum is a local-first AI grading platform designed to help teachers save time and help students learn faster. Teachers create assignments and classrooms; students submit work and receive instant AI-powered feedback with detailed explanations.</p>
+        <h2>What We Do</h2>
+        <p><strong>For Teachers:</strong> Create classrooms, design assignments with custom grading criteria, and review student submissions with AI-generated explanations and breakdowns.</p>
+        <p><strong>For Students:</strong> View your classes, complete assignments, get graded instantly, and use the "Discuss Mistakes" feature to understand your errors with AI teacher and student explanations.</p>
+      </div>
+      <div class="company-page__buttons">
+        <a href="signin/" class="btn btn-primary">Sign in</a>
+        <a href="signup/" class="btn btn-outline">Sign up</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
