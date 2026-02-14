@@ -30,7 +30,7 @@ input:focus{outline:2px solid var(--color-primary);outline-offset:2px}
 .signup-card__radio-title{font-size:.9rem;font-weight:600}
 .signup-card__radio-desc{font-size:.8rem;color:var(--color-text-light)}
 .signup-card__radio--selected{border-color:var(--color-primary);background:linear-gradient(135deg,rgba(102,126,234,.06),rgba(118,75,162,.02));box-shadow:0 10px 25px rgba(148,163,184,.35);transform:translateY(-1px)}
-.signup-card__response{font-size:.85rem;margin-top:.25rem;min-height:1.2em}
+.signup-card__response{font-size:.85rem;margin-top:.25rem;min-height:1.2em;text-align:center}
 .signup-card__response--success{color:#15803d}
 .signup-card__response--error{color:#b91c1c}
 .signup-card--pulse{animation:signupPulse 220ms ease-out 1}
@@ -167,13 +167,11 @@ form.onsubmit=function(e){
 
   window.Sagittarum.auth.signup(n,em,p,ac)
     .then(function(res1){
-      // Show backend raw response for signup under the button
-      respText.textContent=(res1.raw||'');
       respText.classList.remove('signup-card__response--success','signup-card__response--error');
 
       // Treat specific duplicate-account phrase as email already in use
       if((res1.raw||'').toLowerCase().indexOf('account already created')!==-1){
-        respText.innerHTML='<strong>Account already exists.</strong> An account already exists with this email. Try signing in instead.';
+        respText.innerHTML='<strong>Account already exists.</strong><br/>An account already exists with this email. Try signing in instead.';
         respText.classList.add('signup-card__response--error');
         card.classList.add('signup-card--shake');
         btn.disabled=false;
@@ -192,17 +190,21 @@ form.onsubmit=function(e){
       return window.Sagittarum.auth.getToken(em,p);
     })
     .then(function(res2){
-      // Show token (or error) under the button and pulse the card
-      respText.textContent=(res2.raw||'');
       respText.classList.remove('signup-card__response--error');
-      respText.classList.add('signup-card__response--success');
-      card.classList.add('signup-card--pulse');
 
       if(!res2.ok){
+        respText.innerHTML='<strong>Could not sign in automatically.</strong><br/>Please try signing in with your new account.';
+        respText.classList.add('signup-card__response--error');
+        card.classList.add('signup-card--shake');
         btn.disabled=false;
         btn.textContent='Sign up';
         return;
       }
+
+      // Success state: do not show raw token, just a friendly message
+      respText.innerHTML='<strong>Account created.</strong><br/>Redirecting to your dashboard...';
+      respText.classList.add('signup-card__response--success');
+      card.classList.add('signup-card--pulse');
 
       // Store session with token for later validation
       var token=(res2.raw||'').trim();
