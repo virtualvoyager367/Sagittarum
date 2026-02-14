@@ -38,10 +38,12 @@ input,textarea{font-family:inherit;padding:.75rem;border:2px solid var(--color-g
   </nav>
   <main id="appContent" class="page-content"></main>
   <script>
-(function(){
-var SK='sagittarum_session';
+ (function(){
+var SK='sagittarum_session',D=90*24*60*60*1000; // 90 days
+function getSessionFromCookie(){var name=SK+'=',c=document.cookie.split(';');for(var i=0;i<c.length;i++){var x=c[i].trim();if(x.indexOf(name)===0){try{var raw=decodeURIComponent(x.substring(name.length));var d=JSON.parse(raw);if(!d||!d.user||!d.expiresAt)return null;if(Date.now()>d.expiresAt){clearSessionCookie();return null;}return d.user;}catch(e){clearSessionCookie();return null;}}}return null;}
+function clearSessionCookie(){document.cookie=SK+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';}
 window.Sagittarum=window.Sagittarum||{};
-window.Sagittarum.session={getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}};
+window.Sagittarum.session={getCurrentUser:getSessionFromCookie,clearSession:clearSessionCookie};
 var mockTeacherClassrooms=[{id:'class_1',name:'Introduction to Computer Science',studentCount:25,assignmentCount:3,students:[{id:'s1',name:'Alice Johnson',email:'alice@example.com'},{id:'s2',name:'Bob Smith',email:'bob@example.com'}],assignments:[{id:'assign_1',title:'Binary Search Implementation',submissions:20,graded:18},{id:'assign_2',title:'Sorting Algorithms Analysis',submissions:15,graded:12}]}];
 var mockSubmissionResults={assign_1:{submission:'function binarySearch(arr, target) {\n  let left = 0;\n  let right = arr.length - 1;\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}',score:85,maxScore:100,aiTeacherExplanation:'Good implementation of binary search. Minor deduction for not including input validation.',aiStudentExplanation:'Your binary search implementation is correct! Consider adding input validation.'}};
 window.Sagittarum.mockData={getTeacherClassrooms:function(){return mockTeacherClassrooms},getSubmissionResult:function(i){return mockSubmissionResults[i]||null}};
