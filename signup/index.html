@@ -30,8 +30,13 @@ input:focus{outline:2px solid var(--color-primary);outline-offset:2px}
 .signup-card__radio-title{font-size:.9rem;font-weight:600}
 .signup-card__radio-desc{font-size:.8rem;color:var(--color-text-light)}
 .signup-card__radio--selected{border-color:var(--color-primary);background:linear-gradient(135deg,rgba(102,126,234,.06),rgba(118,75,162,.02));box-shadow:0 10px 25px rgba(148,163,184,.35);transform:translateY(-1px)}
-.signup-card__response-wrapper{border:2px solid var(--color-gray-300);border-radius:var(--radius-md);overflow:hidden;background:#fafafa;min-height:60px}
-.signup-card__response-frame{display:block;width:100%;min-height:60px;border:none;background:#fafafa}
+.signup-card__response-wrapper{border:2px solid var(--color-gray-300);border-radius:var(--radius-md);overflow:hidden;background:#fafafa;min-height:60px;margin-top:.5rem;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease,transform .18s ease}
+.signup-card__response-wrapper--success{border-color:#22c55e;background:#ecfdf5;box-shadow:0 12px 30px rgba(34,197,94,.35);animation:signupPulse 220ms ease-out 1}
+.signup-card__response-wrapper--error{border-color:#f97316;background:#fff7ed;box-shadow:0 12px 30px rgba(248,113,113,.35);animation:signupShake 140ms ease-in 1}
+.signup-card__response-frame{display:block;width:100%;min-height:60px;border:none;background:transparent}
+.signup-card__response-frame::-webkit-scrollbar{display:none}
+@keyframes signupPulse{0%{transform:scale(.97)}60%{transform:scale(1.01)}100%{transform:scale(1)}}
+@keyframes signupShake{0%{transform:translateX(0)}25%{transform:translateX(-3px)}50%{transform:translateX(3px)}75%{transform:translateX(-2px)}100%{transform:translateX(0)}}
 .signup-card__footer{text-align:center;font-size:.875rem;color:var(--color-text-light)}
 .signup-card__link{color:#2563eb;font-weight:600}
   </style>
@@ -149,7 +154,9 @@ form.onsubmit=function(e){
       ac=form.querySelector('input[name="accountType"]:checked').value;
 
   if(p!==cp||p.length<6){
-    rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">Password mismatch or too short</pre>';
+    rf.srcdoc='<div style="margin:0;padding:0.75rem 1rem;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;font-size:0.85rem;white-space:pre-wrap;word-break:break-word;color:#7c2d12"><strong>Check your password.</strong><br/>Password mismatch or too short.</div>';
+    rw.classList.remove('signup-card__response-wrapper--success');
+    rw.classList.add('signup-card__response-wrapper--error');
     rw.style.display='block';
     return;
   }
@@ -161,12 +168,14 @@ form.onsubmit=function(e){
   window.Sagittarum.auth.signup(n,em,p,ac)
     .then(function(res1){
       // Show backend raw response for signup
-      rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">'+(res1.raw||'')+'</pre>';
+      rf.srcdoc='<div style="margin:0;padding:0.75rem 1rem;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;font-size:0.85rem;white-space:pre-wrap;word-break:break-word;color:#111827">'+(res1.raw||'')+'</div>';
       rw.style.display='block';
 
       // Treat specific duplicate-account phrase as email already in use
       if((res1.raw||'').toLowerCase().indexOf('account already created')!==-1){
-        rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">An account already exists with this email. Try signing in instead.</pre>';
+        rf.srcdoc='<div style="margin:0;padding:0.75rem 1rem;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;font-size:0.85rem;white-space:pre-wrap;word-break:break-word;color:#7c2d12"><strong>Account already exists.</strong><br/>An account already exists with this email. Try signing in instead.</div>';
+        rw.classList.remove('signup-card__response-wrapper--success');
+        rw.classList.add('signup-card__response-wrapper--error');
         rw.style.display='block';
         btn.disabled=false;
         btn.textContent='Sign up';
@@ -185,7 +194,9 @@ form.onsubmit=function(e){
     })
     .then(function(res2){
       // Show token (or error) in iframe
-      rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">'+(res2.raw||'')+'</pre>';
+      rf.srcdoc='<div style="margin:0;padding:0.75rem 1rem;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',sans-serif;font-size:0.85rem;white-space:pre-wrap;word-break:break-word;color:#052e16">'+(res2.raw||'')+'</div>';
+      rw.classList.remove('signup-card__response-wrapper--error');
+      rw.classList.add('signup-card__response-wrapper--success');
       rw.style.display='block';
 
       if(!res2.ok){
