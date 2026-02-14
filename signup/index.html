@@ -93,8 +93,11 @@ input:focus{outline:2px solid var(--color-primary);outline-offset:2px}
   <script>
 (function(){
 var SK='sagittarum_session',D=7*24*60*60*1000;
+function setCookie(name,value,ms){var expires='';if(ms){var d=new Date();d.setTime(d.getTime()+ms);expires='; expires='+d.toUTCString();}document.cookie=name+'='+encodeURIComponent(value||'')+expires+'; path=/';}
+function getCookie(name){var nameEQ=name+'=';var ca=document.cookie.split(';');for(var i=0;i<ca.length;i++){var c=ca[i];while(c.charAt(0)==' ')c=c.substring(1,c.length);if(c.indexOf(nameEQ)==0)return decodeURIComponent(c.substring(nameEQ.length,c.length));}return null;}
+function eraseCookie(name){document.cookie=name+'=; Max-Age=0; path=/';}
 window.Sagittarum=window.Sagittarum||{};
-window.Sagittarum.session={saveSession:function(u){localStorage.setItem(SK,JSON.stringify({user:u,expiresAt:Date.now()+D}))},getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}};
+window.Sagittarum.session={saveSession:function(u){var payload=JSON.stringify({user:u,expiresAt:Date.now()+D});setCookie(SK,payload,D);},getCurrentUser:function(){try{var s=getCookie(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){eraseCookie(SK);return null}return d.user}catch(e){return null}},clearSession:function(){eraseCookie(SK)}};
 window.Sagittarum.auth={signup:function(n,e,p,r){return new Promise(function(res){setTimeout(function(){if(n&&e&&p&&r){res({success:true,user:{id:'u'+Date.now(),username:e.split('@')[0],email:e,role:r==='teacher'?'teacher':'student',name:(n||'').trim()}})}else res({success:false})},500)})}};
 var user=window.Sagittarum.session.getCurrentUser();
 if(user){location.href=user.role==='teacher'?'../teacher/':'../student/';return}
