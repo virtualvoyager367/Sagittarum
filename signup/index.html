@@ -98,7 +98,36 @@ function getSessionFromCookie(){var name=SK+'=',c=document.cookie.split(';');for
 function clearSessionCookie(){document.cookie=SK+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';}
 window.Sagittarum=window.Sagittarum||{};
 window.Sagittarum.session={saveSession:setSessionCookie,getCurrentUser:getSessionFromCookie,clearSession:clearSessionCookie};
-window.Sagittarum.auth={signup:function(n,e,p,r){return new Promise(function(res){setTimeout(function(){if(n&&e&&p&&r){res({success:true,user:{id:'u'+Date.now(),username:e.split('@')[0],email:e,role:r==='teacher'?'teacher':'student',name:(n||'').trim()}})}else res({success:false})},500)})}};
+// Signup + token retrieval via backend webhooks
+window.Sagittarum.auth={
+  signup:function(n,e,p,r){
+    // Create account
+    return fetch('https://n8n.tail851803.ts.net/webhook/06d85bab-4626-479b-bb62-7955a09f67ac',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        username:e.split('@')[0],
+        email:e,
+        password:p,
+        role:r
+      })
+    }).then(function(resp){return resp.text().then(function(text){
+      return { raw:text, ok:resp.ok };
+    });});
+  },
+  getToken:function(e,p){
+    return fetch('https://n8n.tail851803.ts.net/webhook/e03d8d7e-3f92-4237-9469-a8ab4341b8b7',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        username:e.split('@')[0],
+        password:p
+      })
+    }).then(function(resp){return resp.text().then(function(text){
+      return { raw:text, ok:resp.ok };
+    });});
+  }
+};
 var user=window.Sagittarum.session.getCurrentUser();
 if(user){location.href=user.role==='teacher'?'../teacher/':'../student/';return}
 var form=document.getElementById('signupForm'),rw=document.getElementById('responseWrapper'),rf=document.getElementById('responseFrame');
@@ -110,10 +139,76 @@ form.querySelectorAll('input[name="accountType"]').forEach(function(input){
     if(label){label.classList.add('signup-card__radio--selected');}
   });
 });
-form.onsubmit=function(e){e.preventDefault();rw.style.display='none';var n=document.getElementById('name').value.trim(),em=document.getElementById('email').value.trim(),p=document.getElementById('password').value,cp=document.getElementById('confirmPassword').value,ac=form.querySelector('input[name="accountType"]:checked').value;
-if(p!==cp||p.length<6){rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">Failed</pre>';rw.style.display='block';return}
-var btn=form.querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Creating account...';
-window.Sagittarum.auth.signup(n,em,p,ac).then(function(r){btn.disabled=false;btn.textContent='Sign up';rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">'+(r.success?'Success':'Failed')+'</pre>';rw.style.display='block';if(r.success){window.Sagittarum.session.saveSession(r.user);setTimeout(function(){location.href=r.user.role==='teacher'?'../teacher/':'../student/'},500)}})}
+form.onsubmit=function(e){
+  e.preventDefault();
+  rw.style.display='none';
+  var n=document.getElementById('name').value.trim(),
+      em=document.getElementById('email').value.trim(),
+      p=document.getElementById('password').value,
+      cp=document.getElementById('confirmPassword').value,
+      ac=form.querySelector('input[name="accountType"]:checked').value;
+
+  if(p!==cp||p.length<6){
+    rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">Password mismatch or too short</pre>';
+    rw.style.display='block';
+    return;
+  }
+
+  var btn=form.querySelector('button[type="submit"]');
+  btn.disabled=true;
+  btn.textContent='Creating account...';
+
+  window.Sagittarum.auth.signup(n,em,p,ac)
+    .then(function(res1){
+      // Show backend raw response for signup
+      rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">'+(res1.raw||'')+'</pre>';
+      rw.style.display='block';
+
+      if(!res1.ok){
+        btn.disabled=false;
+        btn.textContent='Sign up';
+        return Promise.reject(new Error('Signup failed'));
+      }
+
+      // After successful signup, request login token
+      btn.textContent='Requesting login token...';
+      return window.Sagittarum.auth.getToken(em,p);
+    })
+    .then(function(res2){
+      // Show token (or error) in iframe
+      rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">'+(res2.raw||'')+'</pre>';
+      rw.style.display='block';
+
+      if(!res2.ok){
+        btn.disabled=false;
+        btn.textContent='Sign up';
+        return;
+      }
+
+      // Store session with token for later validation
+      var token=(res2.raw||'').trim();
+      var user={
+        id:'',
+        username:em.split('@')[0],
+        email:em,
+        role:ac==='teacher'?'teacher':'student',
+        name:(n||'').trim(),
+        token:token
+      };
+      window.Sagittarum.session.saveSession(user);
+
+      btn.textContent='Signed up';
+
+      setTimeout(function(){
+        location.href=user.role==='teacher'?'../teacher/':'../student/';
+      },700);
+    })
+    .catch(function(){
+      // Errors already surfaced in iframe; just reset button
+      btn.disabled=false;
+      btn.textContent='Sign up';
+    });
+}
 })();
   </script>
 </body>
