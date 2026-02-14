@@ -90,11 +90,14 @@ input:focus{outline:2px solid var(--color-primary);outline-offset:2px}
       </div>
     </div>
   </div>
-  <script>
+    <script>
 (function(){
-var SK='sagittarum_session',D=7*24*60*60*1000;
+var SK='sagittarum_session',D=90*24*60*60*1000; // 90 days
+function setSessionCookie(user){var data={user:user,expiresAt:Date.now()+D};var v=encodeURIComponent(JSON.stringify(data));var exp=new Date(Date.now()+D).toUTCString();document.cookie=SK+'='+v+'; expires='+exp+'; path=/';}
+function getSessionFromCookie(){var name=SK+'=',c=document.cookie.split(';');for(var i=0;i<c.length;i++){var x=c[i].trim();if(x.indexOf(name)===0){try{var raw=decodeURIComponent(x.substring(name.length));var d=JSON.parse(raw);if(!d||!d.user||!d.expiresAt)return null;if(Date.now()>d.expiresAt){clearSessionCookie();return null;}return d.user;}catch(e){clearSessionCookie();return null;}}}return null;}
+function clearSessionCookie(){document.cookie=SK+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';}
 window.Sagittarum=window.Sagittarum||{};
-window.Sagittarum.session={saveSession:function(u){localStorage.setItem(SK,JSON.stringify({user:u,expiresAt:Date.now()+D}))},getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}};
+window.Sagittarum.session={saveSession:setSessionCookie,getCurrentUser:getSessionFromCookie,clearSession:clearSessionCookie};
 window.Sagittarum.auth={signup:function(n,e,p,r){return new Promise(function(res){setTimeout(function(){if(n&&e&&p&&r){res({success:true,user:{id:'u'+Date.now(),username:e.split('@')[0],email:e,role:r==='teacher'?'teacher':'student',name:(n||'').trim()}})}else res({success:false})},500)})}};
 var user=window.Sagittarum.session.getCurrentUser();
 if(user){location.href=user.role==='teacher'?'../teacher/':'../student/';return}
