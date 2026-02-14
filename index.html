@@ -3,63 +3,229 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Teacher Dashboard - Sagittarum</title>
+  <title>Sagittarum - AI Grading Platform</title>
   <style>
-:root{--primary-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 100%);--color-primary:#667eea;--color-text:#1f2937;--color-text-light:#6b7280;--color-white:#fff;--color-gray-100:#f3f4f6;--color-gray-200:#e5e7eb;--radius-lg:.75rem;--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,.1)}
+:root{--primary-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 100%);--secondary-gradient:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);--color-primary:#667eea;--color-secondary:#764ba2;--color-text:#0f172a;--color-text-light:#64748b;--color-white:#fff;--color-gray-50:#f9fafb;--color-gray-100:#f3f4f6;--color-gray-200:#e5e7eb;--radius-md:.75rem;--radius-lg:1rem;--shadow-sm:0 1px 2px rgba(15,23,42,.06);--shadow-lg:0 18px 45px rgba(15,23,42,.18)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);color:var(--color-text);min-height:100vh}
-a{color:var(--color-primary)}
-button{font-family:inherit;cursor:pointer;border:none}
-.card{background:var(--color-white);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow-lg);transition:transform .2s,box-shadow .2s}
-.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-xl)}
-.btn{font-weight:600;border-radius:var(--radius-lg);padding:.75rem;cursor:pointer;background:var(--primary-gradient);color:var(--color-white)}
-.btn-outline{background:transparent;color:var(--color-primary);border:2px solid var(--color-primary)}
-.btn-sm{padding:.375rem .75rem;font-size:.875rem}
-.navbar{background:var(--color-white);box-shadow:0 4px 6px rgba(0,0,0,.1);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
-.navbar__title{background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:1.75rem;font-weight:700;text-decoration:none}
-.page-content{padding:1.5rem;max-width:1200px;margin:0 auto}
-.page-content__header{margin-bottom:2rem;text-align:center}
-.page-content__title{background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:2rem}
-.dashboard-grid,.classroom-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem}
-.dashboard-card__title,.classroom-detail__student-name,.classroom-detail__assignment-name{font-size:1.25rem;font-weight:600}
-.dashboard-card__desc{color:var(--color-text-light);font-size:.875rem}
-.classroom-detail__section{margin-bottom:1.5rem}
-.classroom-detail__student,.classroom-detail__assignment{padding:.75rem;background:var(--color-gray-100);border-radius:var(--radius-lg);margin-bottom:.5rem}
-.classroom-detail__student-email{font-size:.875rem;color:var(--color-text-light)}
-.back-btn{margin-bottom:1rem;color:var(--color-primary);font-weight:500}
-.review-submission{font-family:monospace;font-size:.875rem;white-space:pre-wrap;background:var(--color-gray-100);padding:1rem;border-radius:var(--radius-lg)}
-input,textarea{font-family:inherit;padding:.75rem;border:2px solid var(--color-gray-200);border-radius:var(--radius-lg);width:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:radial-gradient(circle at top left,#e0e7ff 0,#f9fafb 35%,#fdf2ff 70%,#e0f2fe 100%);color:var(--color-text);line-height:1.6;min-height:100vh}
+a{color:var(--color-primary);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.page{min-height:100vh;display:flex;flex-direction:column}
+.nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(16px);background:linear-gradient(to bottom,rgba(255,255,255,.85),rgba(255,255,255,.65));border-bottom:1px solid rgba(148,163,184,.18)}
+.nav__inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.5rem}
+.nav__brand{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:1.25rem;letter-spacing:.04em;text-decoration:none}
+.nav__logo{width:32px;height:32px;border-radius:999px;background:var(--primary-gradient);box-shadow:0 10px 25px rgba(79,70,229,.45);position:relative;overflow:hidden}
+.nav__logo::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 0,rgba(255,255,255,.9),transparent 55%)}
+.nav__name{background:var(--primary-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.nav__tag{font-size:.75rem;padding:.15rem .55rem;border-radius:999px;background:rgba(15,23,42,.04);color:var(--color-text-light);border:1px solid rgba(148,163,184,.4)}
+.nav__actions{display:flex;gap:.75rem;align-items:center}
+
+.btn{font-weight:600;border-radius:999px;padding:.6rem 1.2rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font-size:.9rem;border:none;transition:transform .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease}
+.btn--ghost{background:transparent;color:var(--color-text);border:1px solid rgba(148,163,184,.55)}
+.btn--ghost:hover{background:rgba(15,23,42,.03);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.btn--primary{background:var(--primary-gradient);color:var(--color-white);box-shadow:0 18px 35px rgba(79,70,229,.35)}
+.btn--primary:hover{transform:translateY(-2px) translateZ(0);box-shadow:var(--shadow-lg)}
+.btn--outline{background:rgba(255,255,255,.85);color:var(--color-primary);border:1px solid rgba(129,140,248,.7)}
+.btn--outline:hover{background:rgba(239,246,255,1);transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+
+.main{flex:1;display:flex;align-items:stretch;justify-content:center;padding:2.5rem 1.5rem 3rem}
+.shell{position:relative;max-width:1120px;width:100%;display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1.1fr);gap:3rem;align-items:center}
+.shell::before{content:"";position:absolute;inset:-80px -120px;background:radial-gradient(circle at 0 0,rgba(129,140,248,.18),transparent 60%),radial-gradient(circle at 100% 0,rgba(244,114,182,.16),transparent 55%),radial-gradient(circle at 50% 100%,rgba(56,189,248,.22),transparent 60%);opacity:.9;z-index:-2}
+.shell::after{content:"";position:absolute;inset:-1px;border-radius:48px;background:linear-gradient(to bottom right,rgba(148,163,184,.55),rgba(79,70,229,.35),rgba(236,72,153,.35));opacity:.28;z-index:-1;filter:blur(18px)}
+
+.hero{background:rgba(255,255,255,.96);border-radius:40px;padding:2.25rem 2.4rem;box-shadow:var(--shadow-lg);border:1px solid rgba(148,163,184,.25);backdrop-filter:blur(22px);animation:fadeInUp .6s ease-out both}
+.hero__eyebrow{display:inline-flex;align-items:center;gap:.4rem;padding:.2rem .65rem;border-radius:999px;background:rgba(239,246,255,1);border:1px solid rgba(129,140,248,.7);font-size:.7rem;font-weight:600;letter-spacing:.08em;color:var(--color-text-light);text-transform:uppercase;margin-bottom:.9rem}
+.hero__pill-dot{width:6px;height:6px;border-radius:999px;background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 0 0 4px rgba(34,197,94,.22)}
+.hero__title{font-size:2.9rem;line-height:1.05;margin-bottom:.9rem;letter-spacing:-.04em;background:var(--primary-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero__subtitle{color:var(--color-text-light);font-size:1.05rem;margin-bottom:1.5rem}
+.hero__points{display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.75rem;color:var(--color-text-light);font-size:.95rem}
+.hero__point{display:flex;align-items:flex-start;gap:.45rem}
+.hero__check{margin-top:.15rem;width:14px;height:14px;border-radius:999px;background:linear-gradient(135deg,#22c55e,#16a34a);display:inline-flex;align-items:center;justify-content:center;color:#ecfdf5;font-size:.7rem;box-shadow:0 0 0 3px rgba(34,197,94,.18)}
+.hero__cta{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center}
+.hero__hint{font-size:.8rem;color:var(--color-text-light)}
+
+.panel{border-radius:32px;padding:1.9rem 1.9rem 1.8rem;background:rgba(15,23,42,.88);color:#e5e7eb;box-shadow:0 18px 40px rgba(15,23,42,.75);position:relative;overflow:hidden;animation:fadeInUp .7s ease-out both .08s}
+.panel::before{content:"";position:absolute;inset:-20%;background:conic-gradient(from 220deg,rgba(129,140,248,.22),rgba(14,165,233,.12),rgba(236,72,153,.24),rgba(129,140,248,.22));opacity:.7;filter:blur(24px);z-index:-2}
+.panel::after{content:"";position:absolute;inset:1px;border-radius:30px;background:radial-gradient(circle at 0 0,rgba(15,23,42,.6),transparent 60%);z-index:-1}
+.panel__header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.panel__badge{font-size:.75rem;padding:.25rem .7rem;border-radius:999px;background:rgba(15,23,42,.85);border:1px solid rgba(148,163,184,.55);color:#e5e7eb}
+.panel__title{font-size:1.1rem;font-weight:600}
+.panel__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem}
+.panel-card{border-radius:1rem;padding:1rem 1rem 1.05rem;background:rgba(15,23,42,.78);border:1px solid rgba(148,163,184,.35);box-shadow:0 10px 28px rgba(15,23,42,.6);transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+.panel-card:hover{transform:translateY(-3px);background:rgba(15,23,42,.9);box-shadow:0 18px 40px rgba(15,23,42,.85)}
+.panel-card__label{font-size:.75rem;text-transform:uppercase;letter-spacing:.09em;color:#9ca3af;margin-bottom:.4rem}
+.panel-card__value{font-size:.95rem;font-weight:600}
+.panel__footer{margin-top:1.3rem;font-size:.78rem;color:#9ca3af;display:flex;justify-content:space-between;align-items:center;gap:.75rem}
+
+.section{max-width:1120px;margin:0 auto 3rem;padding:0 1.5rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem}
+.section__card{background:rgba(255,255,255,.9);border-radius:1.4rem;padding:1.4rem 1.5rem;border:1px solid rgba(226,232,240,.9);box-shadow:0 14px 35px rgba(148,163,184,.18);transition:transform .2s ease,box-shadow .2s ease,background .18s ease}
+.section__card:hover{transform:translateY(-4px);box-shadow:0 22px 55px rgba(148,163,184,.32);background:#fff}
+.section__icon{width:32px;height:32px;border-radius:999px;background:rgba(79,70,229,.08);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:.8rem}
+.section__title{font-size:1.05rem;font-weight:600;margin-bottom:.45rem}
+.section__body{font-size:.9rem;color:var(--color-text-light)}
+
+.section--split{grid-template-columns:minmax(0,1.1fr) minmax(0,1.2fr);align-items:start;margin-bottom:4rem}
+.section__list{display:flex;flex-direction:column;gap:.7rem;font-size:.9rem;color:var(--color-text-light)}
+.section__bullet{display:flex;gap:.5rem}
+.section__dot{margin-top:.35rem;width:7px;height:7px;border-radius:999px;background:linear-gradient(135deg,#f97316,#ea580c)}
+.section__muted{font-size:.82rem;color:var(--color-text-light);margin-top:.6rem}
+
+.footer{max-width:1120px;margin:0 auto 1.5rem;padding:0 1.5rem;font-size:.78rem;color:#94a3b8;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.footer__brand{font-weight:600;color:#6b7280}
+
+@keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:2rem}
+  .hero{padding:2rem 1.6rem;border-radius:32px}
+  .panel{order:-1;border-radius:28px}
+}
+
+@media (max-width:640px){
+  .nav__inner{padding:.8rem 1.1rem}
+  .hero__title{font-size:2.25rem}
+  .main{padding:1.75rem 1.1rem 2.5rem}
+  .section{grid-template-columns:minmax(0,1fr)}
+  .section--split{grid-template-columns:minmax(0,1fr)}
+  .panel__grid{grid-template-columns:minmax(0,1fr)}
+}
   </style>
 </head>
 <body>
-  <nav class="navbar">
-    <a href="#" class="navbar__title" id="navBrand">Sagittarum</a>
-    <div><span id="navUser"></span> <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Logout</button></div>
-  </nav>
-  <main id="appContent" class="page-content"></main>
+  <div class="page">
+    <header class="nav">
+      <div class="nav__inner">
+        <a href="#" class="nav__brand">
+          <span class="nav__logo"></span>
+          <span class="nav__name">Sagittarum</span>
+          <span class="nav__tag">AI grading</span>
+        </a>
+        <div class="nav__actions">
+          <a href="signin/" class="btn btn--ghost">Sign in</a>
+          <a href="signup/" class="btn btn--primary">Get started</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="shell">
+        <section class="hero">
+          <div class="hero__eyebrow">
+            <span class="hero__pill-dot"></span>
+            <span>Local‑first AI grading for real classrooms</span>
+          </div>
+          <h1 class="hero__title">Grade in minutes. Teach like you have hours.</h1>
+          <p class="hero__subtitle">Sagittarum turns raw submissions into rich, explainable feedback for every student — without shipping your data off to a backend you don't control.</p>
+
+          <div class="hero__points">
+            <div class="hero__point">
+              <span class="hero__check">✓</span>
+              <span><strong>For teachers:</strong> Create assignments, define rubrics, and review AI‑generated breakdowns instead of stacks of paper.</span>
+            </div>
+            <div class="hero__point">
+              <span class="hero__check">✓</span>
+              <span><strong>For students:</strong> See your score instantly, then open "Discuss mistakes" to get teacher‑style explanations in plain language.</span>
+            </div>
+            <div class="hero__point">
+              <span class="hero__check">✓</span>
+              <span><strong>Local‑first:</strong> Built to sit close to your data and your workflow so you stay in control as the backend evolves.</span>
+            </div>
+          </div>
+
+          <div class="hero__cta">
+            <a href="signup/" class="btn btn--primary">Create an account</a>
+            <a href="signin/" class="btn btn--outline">I already use Sagittarum</a>
+            <span class="hero__hint">No credit card. Just pick teacher or student and start grading.</span>
+          </div>
+        </section>
+
+        <aside class="panel">
+          <div class="panel__header">
+            <div>
+              <div class="panel__title">Live preview of your day</div>
+              <div style="font-size:.8rem;color:#9ca3af;margin-top:.15rem">One dashboard for teachers and students.</div>
+            </div>
+            <span class="panel__badge">Demo data</span>
+          </div>
+
+          <div class="panel__grid">
+            <div class="panel-card">
+              <div class="panel-card__label">Teacher view</div>
+              <div class="panel-card__value">3 classrooms · 12 active assignments</div>
+            </div>
+            <div class="panel-card">
+              <div class="panel-card__label">Student view</div>
+              <div class="panel-card__value">"Intro to CS" · Binary Search · 85 / 100</div>
+            </div>
+            <div class="panel-card">
+              <div class="panel-card__label">Feedback</div>
+              <div class="panel-card__value">AI explains every mistake in teacher + student wording.</div>
+            </div>
+            <div class="panel-card">
+              <div class="panel-card__label">Time saved</div>
+              <div class="panel-card__value">Hours of marking compressed into focused review minutes.</div>
+            </div>
+          </div>
+
+          <div class="panel__footer">
+            <span>Designed for laptops, labs, and late‑night grading sessions.</span>
+            <span>→ Sign in as teacher or student to see your own dashboard.</span>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <section class="section" aria-label="Highlights">
+      <article class="section__card">
+        <div class="section__icon">📚</div>
+        <h2 class="section__title">Classroom‑first design</h2>
+        <p class="section__body">Organize courses into clean, card‑based dashboards so you can see every class, assignment, and status at a glance.</p>
+      </article>
+      <article class="section__card">
+        <div class="section__icon">✨</div>
+        <h2 class="section__title">Explainable AI feedback</h2>
+        <p class="section__body">Every score can be opened into a rich explanation, written one way for teachers and another for students.</p>
+      </article>
+      <article class="section__card">
+        <div class="section__icon">🛡️</div>
+        <h2 class="section__title">Local‑first friendly</h2>
+        <p class="section__body">The UI is fully static and GitHub Pages–ready today; connect it to your own backend and policies tomorrow.</p>
+      </article>
+    </section>
+
+    <section class="section section--split" aria-label="For teachers and students">
+      <div>
+        <h2 class="section__title" style="font-size:1.2rem;margin-bottom:.7rem">Built for teachers</h2>
+        <div class="section__list">
+          <div class="section__bullet"><span class="section__dot"></span><span>Create card‑based classrooms and assignments in a few clicks.</span></div>
+          <div class="section__bullet"><span class="section__dot"></span><span>Define grading criteria, total points, and retry rules per assignment.</span></div>
+          <div class="section__bullet"><span class="section__dot"></span><span>Skim AI‑generated breakdowns instead of reading every line of code or text.</span></div>
+        </div>
+      </div>
+      <div>
+        <h2 class="section__title" style="font-size:1.2rem;margin-bottom:.7rem">Loved by students</h2>
+        <div class="section__list">
+          <div class="section__bullet"><span class="section__dot"></span><span>See your classes and assignments in a clean, animated dashboard.</span></div>
+          <div class="section__bullet"><span class="section__dot"></span><span>Submit work and instantly see scores, statuses, and attempts.</span></div>
+          <div class="section__bullet"><span class="section__dot"></span><span>Use "Discuss mistakes" to get AI teacher + AI student explanations for every grade.</span></div>
+        </div>
+        <p class="section__muted">Switching between teacher and student experience is just a different account — the interface stays familiar.</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span class="footer__brand">© <span id="year"></span> Sagittarum.</span>
+      <span>Static UI, ready for your backend and policies.</span>
+    </footer>
+  </div>
+
   <script>
-(function(){
-var SK='sagittarum_session';
-window.Sagittarum=window.Sagittarum||{};
-window.Sagittarum.session={getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}};
-var mockTeacherClassrooms=[{id:'class_1',name:'Introduction to Computer Science',studentCount:25,assignmentCount:3,students:[{id:'s1',name:'Alice Johnson',email:'alice@example.com'},{id:'s2',name:'Bob Smith',email:'bob@example.com'}],assignments:[{id:'assign_1',title:'Binary Search Implementation',submissions:20,graded:18},{id:'assign_2',title:'Sorting Algorithms Analysis',submissions:15,graded:12}]}];
-var mockSubmissionResults={assign_1:{submission:'function binarySearch(arr, target) {\n  let left = 0;\n  let right = arr.length - 1;\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}',score:85,maxScore:100,aiTeacherExplanation:'Good implementation of binary search. Minor deduction for not including input validation.',aiStudentExplanation:'Your binary search implementation is correct! Consider adding input validation.'}};
-window.Sagittarum.mockData={getTeacherClassrooms:function(){return mockTeacherClassrooms},getSubmissionResult:function(i){return mockSubmissionResults[i]||null}};
-var session=window.Sagittarum.session,mock=window.Sagittarum.mockData,user=session.getCurrentUser();
-if(!user||user.role!=='teacher'){location.href='../';return}
-document.getElementById('navUser').textContent=user.name+' (teacher)';
-document.getElementById('logoutBtn').onclick=function(){session.clearSession();location.href='../'};
-document.getElementById('navBrand').onclick=function(e){e.preventDefault();var u=session.getCurrentUser();if(!u){location.href='../signin/';return}location.href=u.role==='teacher'?'../teacher/':'../student/'};
-function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
-function render(){var hash=(location.hash||'#').slice(1),parts=hash?hash.split('/'):[],c=document.getElementById('appContent');
-if(parts[0]==='assignment'&&parts[2]==='review'){renderReview(c,parts[1])}else if(parts[0]==='assignment'&&parts[1]==='create'){renderCreate(c)}else if(parts[0]==='classroom'){renderClassroom(c,parts[1])}else if(parts[0]==='classrooms'){renderList(c)}else{renderDash(c)}}
-function renderDash(c){var cards=[{title:'Create Classroom',hash:'#classroom/create'},{title:'View Classrooms',hash:'#classrooms'},{title:'Create Assignment',hash:'#assignment/create'},{title:'Analytics',hash:'#analytics'}];c.innerHTML='<div class="page-content__header"><h1 class="page-content__title">Sagittarum</h1><p>Teacher Dashboard</p></div><div class="dashboard-grid">'+cards.map(function(x){return'<div class="card dashboard-card" data-hash="'+x.hash+'"><div class="dashboard-card__title">'+esc(x.title)+'</div><div class="dashboard-card__desc">Click to open</div></div>'}).join('')+'</div>';c.querySelectorAll('.dashboard-card').forEach(function(el){el.onclick=function(){var h=el.dataset.hash;if(h==='#analytics'||h==='#classroom/create'){c.innerHTML='<div class="card"><h2>Coming soon</h2></div>'}else{location.hash=h.slice(1)}}})}
-function renderList(c){var cls=mock.getTeacherClassrooms();c.innerHTML='<div style="display:flex;justify-content:space-between;margin-bottom:1.5rem"><div><h1>My Classrooms</h1></div></div><div class="classroom-grid">'+cls.map(function(x){return'<div class="card classroom-card" data-id="'+x.id+'"><div class="dashboard-card__title">'+esc(x.name)+'</div><div class="dashboard-card__desc">'+x.studentCount+' students, '+x.assignmentCount+' assignments</div></div>'}).join('')+'</div>';c.querySelectorAll('.classroom-card').forEach(function(el){el.onclick=function(){location.hash='#classroom/'+el.dataset.id}})}
-function renderClassroom(c,id){var cls=mock.getTeacherClassrooms().filter(function(x){return x.id===id})[0];if(!cls){c.innerHTML='<div class="card"><p>Not found.</p><a href="#classrooms">Back</a></div>';return}var sh=cls.students.map(function(s){return'<div class="classroom-detail__student"><div class="classroom-detail__student-name">'+esc(s.name)+'</div><div class="classroom-detail__student-email">'+esc(s.email)+'</div></div>'}).join(''),ah=cls.assignments.map(function(a){return'<div class="classroom-detail__assignment" style="display:flex;justify-content:space-between;align-items:center"><div><div class="classroom-detail__assignment-name">'+esc(a.title)+'</div><span style="font-size:.875rem">'+a.submissions+' submissions, '+a.graded+' graded</span></div><a href="#assignment/'+a.id+'/review" class="btn btn-outline btn-sm">Review</a></div>'}).join('');c.innerHTML='<button class="back-btn" id="b1">&larr; Back</button><div class="card" style="margin-bottom:1.5rem;text-align:center"><h1>'+esc(cls.name)+'</h1></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem"><div class="card classroom-detail__section"><h2>Students</h2>'+sh+'</div><div class="card classroom-detail__section"><h2>Assignments</h2>'+ah+'</div></div>';document.getElementById('b1').onclick=function(){location.hash='#classrooms'}}
-function renderCreate(c){c.innerHTML='<button class="back-btn" id="b1">&larr; Back</button><div class="card" style="max-width:600px"><h1>Create Assignment</h1><form id="af"><div style="margin-bottom:1rem"><label style="display:block;font-weight:600;margin-bottom:.25rem">Title</label><input type="text" id="at" required /></div><div style="margin-bottom:1rem"><label style="display:block;font-weight:600;margin-bottom:.25rem">Total Points</label><input type="number" id="ap" required min="1" /></div><div style="margin-bottom:1rem"><label style="display:block;font-weight:600;margin-bottom:.25rem">Instructions</label><textarea id="ai" rows="5" required></textarea></div><button type="submit" class="btn">Create</button></form></div>';document.getElementById('b1').onclick=function(){location.hash=''};document.getElementById('af').onsubmit=function(e){e.preventDefault();alert('Assignment created! (Demo)');location.hash=''}}
-function renderReview(c,assignId){var r=mock.getSubmissionResult(assignId);if(!r){c.innerHTML='<div class="card"><p>No submissions.</p><a href="#classrooms">Back</a></div>';return}var pct=Math.round((r.score/r.maxScore)*100);c.innerHTML='<button class="back-btn" id="b1">&larr; Back</button><div class="card" style="margin-bottom:1.5rem;text-align:center"><h1>Assignment Review</h1><p>Student: Alice Johnson</p></div><div class="card" style="margin-bottom:1.5rem"><h2>Submission</h2><pre class="review-submission">'+esc(r.submission)+'</pre></div><div class="card" style="margin-bottom:1.5rem;text-align:center"><div style="font-size:3rem;font-weight:700;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+r.score+' / '+r.maxScore+'</div><div>'+pct+'%</div></div><div class="card" style="margin-bottom:1.5rem"><h2>AI Teacher Explanation</h2><p>'+esc(r.aiTeacherExplanation)+'</p></div><div class="card"><h2>AI Student Explanation</h2><p>'+esc(r.aiStudentExplanation)+'</p></div>';document.getElementById('b1').onclick=function(){location.hash='#classrooms'}}
-window.onhashchange=render;render();
-})();
+    // Set current year in footer without any framework
+    (function(){
+      var y=document.getElementById('year');
+      if(y){y.textContent=new Date().getFullYear();}
+    })();
   </script>
 </body>
 </html>
