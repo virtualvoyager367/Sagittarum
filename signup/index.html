@@ -81,8 +81,6 @@ var SK='sagittarum_session',D=7*24*60*60*1000;
 window.Sagittarum=window.Sagittarum||{};
 window.Sagittarum.session={saveSession:function(u){localStorage.setItem(SK,JSON.stringify({user:u,expiresAt:Date.now()+D}))},getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}};
 window.Sagittarum.auth={signup:function(n,e,p,r){return new Promise(function(res){setTimeout(function(){if(n&&e&&p&&r){res({success:true,user:{id:'u'+Date.now(),username:e.split('@')[0],email:e,role:r==='teacher'?'teacher':'student',name:(n||'').trim()}})}else res({success:false})},500)})}};
-var user=window.Sagittarum.session.getCurrentUser();
-if(user){location.href=user.role==='teacher'?'../teacher/':'../student/';return}
 var form=document.getElementById('signupForm'),rw=document.getElementById('responseWrapper'),rf=document.getElementById('responseFrame');
 // enhance account type radios into pill-style toggle buttons
 var typeLabels=form.querySelectorAll('.signup-card__radio');
