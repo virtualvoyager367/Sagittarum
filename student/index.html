@@ -47,9 +47,11 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   <main id="appContent" class="page-content"></main>
   <script>
 ;(function(){
-var SK='sagittarum_session',D=7*24*60*60*1000;
+var SK='sagittarum_session',D=90*24*60*60*1000; // 90 days
+function getSessionFromCookie(){var name=SK+'=',c=document.cookie.split(';');for(var i=0;i<c.length;i++){var x=c[i].trim();if(x.indexOf(name)===0){try{var raw=decodeURIComponent(x.substring(name.length));var d=JSON.parse(raw);if(!d||!d.user||!d.expiresAt)return null;if(Date.now()>d.expiresAt){clearSessionCookie();return null;}return d.user;}catch(e){clearSessionCookie();return null;}}}return null;}
+function clearSessionCookie(){document.cookie=SK+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';}
 window.Sagittarum=window.Sagittarum||{};
-window.Sagittarum.session={getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}};
+window.Sagittarum.session={getCurrentUser:getSessionFromCookie,clearSession:clearSessionCookie};
 var mockClassrooms=[{id:'class_1',name:'Introduction to Computer Science',teacher:'Dr. Sarah Johnson',studentCount:25,assignmentCount:3},{id:'class_2',name:'Advanced Algorithms',teacher:'Prof. Michael Chen',studentCount:18,assignmentCount:5},{id:'class_3',name:'Data Structures',teacher:'Dr. Sarah Johnson',studentCount:30,assignmentCount:4}];
 var mockAssignments={class_1:[{id:'assign_1',title:'Binary Search Implementation',totalPoints:100,dueDate:'2024-02-15',status:'graded',score:85,maxScore:100},{id:'assign_2',title:'Sorting Algorithms Analysis',totalPoints:100,dueDate:'2024-02-20',status:'attempted',score:null,maxScore:100},{id:'assign_3',title:'Tree Traversal Problems',totalPoints:100,dueDate:'2024-02-25',status:'not_started',score:null,maxScore:100}],class_2:[{id:'assign_4',title:'Dynamic Programming Challenge',totalPoints:150,dueDate:'2024-02-18',status:'graded',score:142,maxScore:150}],class_3:[{id:'assign_5',title:'Hash Table Implementation',totalPoints:100,dueDate:'2024-02-22',status:'not_started',score:null,maxScore:100}]};
 var mockAssignmentDetails={assign_1:{id:'assign_1',title:'Binary Search Implementation',instructions:'Implement a binary search algorithm that finds the index of a target value in a sorted array. Return -1 if not found.',totalPoints:100,gradingCriteria:[{criterion:'Correctness',points:50},{criterion:'Edge case handling',points:30},{criterion:'Code quality',points:20}],dueDate:'2024-02-15'}};
