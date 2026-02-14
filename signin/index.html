@@ -59,8 +59,11 @@ input:focus{outline:2px solid var(--color-primary);outline-offset:2px}
   </div>
   <script>
 (function(){
-var SK='sagittarum_session',D=7*24*60*60*1000;
-window.Sagittarum={session:{saveSession:function(u){localStorage.setItem(SK,JSON.stringify({user:u,expiresAt:Date.now()+D}))},getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}},auth:{login:function(u,p){return new Promise(function(r){setTimeout(function(){if(u&&p){var role=/teacher|prof/i.test(u)?'teacher':'student';r({success:true,user:{id:'u'+Date.now(),username:u,role:role,name:u.charAt(0).toUpperCase()+u.slice(1)}})}else r({success:false,error:'Invalid credentials'})},500)})}}};
+var SK='sagittarum_session',D=90*24*60*60*1000; // 90 days
+function setSessionCookie(user){var data={user:user,expiresAt:Date.now()+D};var v=encodeURIComponent(JSON.stringify(data));var exp=new Date(Date.now()+D).toUTCString();document.cookie=SK+'='+v+'; expires='+exp+'; path=/';}
+function getSessionFromCookie(){var name=SK+'=',c=document.cookie.split(';');for(var i=0;i<c.length;i++){var x=c[i].trim();if(x.indexOf(name)===0){try{var raw=decodeURIComponent(x.substring(name.length));var d=JSON.parse(raw);if(!d||!d.user||!d.expiresAt)return null;if(Date.now()>d.expiresAt){clearSessionCookie();return null;}return d.user;}catch(e){clearSessionCookie();return null;}}}return null;}
+function clearSessionCookie(){document.cookie=SK+'=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';}
+window.Sagittarum={session:{saveSession:setSessionCookie,getCurrentUser:getSessionFromCookie,clearSession:clearSessionCookie},auth:{login:function(u,p){return new Promise(function(r){setTimeout(function(){if(u&&p){var role=/teacher|prof/i.test(u)?'teacher':'student';r({success:true,user:{id:'u'+Date.now(),username:u,role:role,name:u.charAt(0).toUpperCase()+u.slice(1)}})}else r({success:false,error:'Invalid credentials'})},500)})}}};
 var user=window.Sagittarum.session.getCurrentUser();
 if(user){location.href=user.role==='teacher'?'../teacher/':'../student/';return}
 document.getElementById('loginForm').onsubmit=function(e){e.preventDefault();var u=document.getElementById('username').value.trim(),p=document.getElementById('password').value,err=document.getElementById('loginError');err.style.display='none';window.Sagittarum.auth.login(u,p).then(function(r){if(r.success){window.Sagittarum.session.saveSession(r.user);location.href=r.user.role==='teacher'?'../teacher/':'../student/'}else{err.textContent=r.error||'Sign in failed';err.style.display='block'}})}
