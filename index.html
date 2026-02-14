@@ -61,10 +61,7 @@ a:hover{text-decoration:underline}
 .section{max-width:1120px;margin:0 auto 3rem;padding:0 1.5rem;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem}
 .section__card{background:rgba(255,255,255,.9);border-radius:1.4rem;padding:1.4rem 1.5rem;border:1px solid rgba(226,232,240,.9);box-shadow:0 14px 35px rgba(148,163,184,.18);transition:transform .2s ease,box-shadow .2s ease,background .18s ease}
 .section__card:hover{transform:translateY(-4px);box-shadow:0 22px 55px rgba(148,163,184,.32);background:#fff}
-.section__icon{width:32px;height:32px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;margin-bottom:.8rem;color:#1e293b;box-shadow:0 10px 25px rgba(15,23,42,.12);}
-.section__icon--classes{background:conic-gradient(from 210deg,rgba(59,130,246,.16),rgba(99,102,241,.65),rgba(59,130,246,.12));}
-.section__icon--spark{background:conic-gradient(from 180deg,rgba(251,191,36,.18),rgba(244,114,182,.7),rgba(251,191,36,.2));}
-.section__icon--shield{background:conic-gradient(from 160deg,rgba(56,189,248,.18),rgba(34,197,94,.7),rgba(56,189,248,.24));}
+.section__icon{width:32px;height:32px;border-radius:999px;background:rgba(79,70,229,.08);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:.8rem}
 .section__title{font-size:1.05rem;font-weight:600;margin-bottom:.45rem}
 .section__body{font-size:.9rem;color:var(--color-text-light)}
 
@@ -99,14 +96,14 @@ a:hover{text-decoration:underline}
   <div class="page">
     <header class="nav">
       <div class="nav__inner">
-        <a href="#" class="nav__brand" id="navBrand">
+        <a href="#" class="nav__brand">
           <span class="nav__logo"></span>
           <span class="nav__name">Sagittarum</span>
           <span class="nav__tag">AI grading</span>
         </a>
         <div class="nav__actions">
-          <a href="signin/" class="btn btn--ghost" id="navSignIn">Sign in</a>
-          <a href="signup/" class="btn btn--primary" id="navGetStarted">Get started</a>
+          <a href="signin/" class="btn btn--ghost">Sign in</a>
+          <a href="signup/" class="btn btn--primary">Get started</a>
         </div>
       </div>
     </header>
@@ -137,8 +134,8 @@ a:hover{text-decoration:underline}
           </div>
 
           <div class="hero__cta">
-            <a href="signup/" class="btn btn--primary" id="heroPrimary">Create an account</a>
-            <a href="signin/" class="btn btn--outline" id="heroSecondary">I already use Sagittarum</a>
+            <a href="signup/" class="btn btn--primary">Create an account</a>
+            <a href="signin/" class="btn btn--outline">I already use Sagittarum</a>
             <span class="hero__hint">No credit card. Just pick teacher or student and start grading.</span>
           </div>
         </section>
@@ -181,17 +178,17 @@ a:hover{text-decoration:underline}
 
     <section class="section" aria-label="Highlights">
       <article class="section__card">
-        <div class="section__icon section__icon--classes">CL</div>
+        <div class="section__icon">📚</div>
         <h2 class="section__title">Classroom‑first design</h2>
         <p class="section__body">Organize courses into clean, card‑based dashboards so you can see every class, assignment, and status at a glance.</p>
       </article>
       <article class="section__card">
-        <div class="section__icon section__icon--spark">FX</div>
+        <div class="section__icon">✨</div>
         <h2 class="section__title">Explainable AI feedback</h2>
         <p class="section__body">Every score can be opened into a rich explanation, written one way for teachers and another for students.</p>
       </article>
       <article class="section__card">
-        <div class="section__icon section__icon--shield">LF</div>
+        <div class="section__icon">🛡️</div>
         <h2 class="section__title">Local‑first friendly</h2>
         <p class="section__body">The UI is fully static and GitHub Pages–ready today; connect it to your own backend and policies tomorrow.</p>
       </article>
@@ -224,89 +221,10 @@ a:hover{text-decoration:underline}
   </div>
 
   <script>
-    // Utility: read current session without breaking older pages
+    // Set current year in footer without any framework
     (function(){
       var y=document.getElementById('year');
       if(y){y.textContent=new Date().getFullYear();}
-
-      var SK='sagittarum_session';
-      function getUser(){
-        try{
-          var s=localStorage.getItem(SK);
-          if(!s) return null;
-          var d=JSON.parse(s);
-          if(!d || !d.user || !d.user.role) return null;
-          if(d.expiresAt && Date.now()>d.expiresAt){
-            localStorage.removeItem(SK);
-            return null;
-          }
-          return d.user;
-        }catch(e){
-          return null;
-        }
-      }
-
-      function gotoDashboard(user){
-        if(!user){
-          window.location.href = 'signin/';
-          return;
-        }
-        if(user.role === 'teacher'){
-          window.location.href = 'teacher/';
-        }else{
-          window.location.href = 'student/';
-        }
-      }
-
-      var brand = document.getElementById('navBrand');
-      if(brand){
-        brand.addEventListener('click', function(e){
-          e.preventDefault();
-          var u=getUser();
-          if(!u){ window.location.href = 'signin/'; return; }
-          gotoDashboard(u);
-        });
-      }
-
-      function wireButton(id, fallbackHref, toDashboard){
-        var el=document.getElementById(id);
-        if(!el) return;
-        el.addEventListener('click', function(e){
-          e.preventDefault();
-          var u=getUser();
-          if(toDashboard){
-            gotoDashboard(u);
-          }else{
-            // respect original intent regardless of session
-            window.location.href = fallbackHref;
-          }
-        });
-      }
-
-      // Top-right buttons always go to explicit auth pages
-      wireButton('navSignIn','signin/',false);
-      wireButton('navGetStarted','signup/',false);
-
-      // Hero buttons: primary goes to signup (or dashboard if already logged in),
-      // secondary goes to signin (or dashboard if already logged in)
-      var heroPrimary=document.getElementById('heroPrimary');
-      if(heroPrimary){
-        heroPrimary.addEventListener('click', function(e){
-          e.preventDefault();
-          var u=getUser();
-          if(u){ gotoDashboard(u); }
-          else{ window.location.href='signup/'; }
-        });
-      }
-      var heroSecondary=document.getElementById('heroSecondary');
-      if(heroSecondary){
-        heroSecondary.addEventListener('click', function(e){
-          e.preventDefault();
-          var u=getUser();
-          if(u){ gotoDashboard(u); }
-          else{ window.location.href='signin/'; }
-        });
-      }
     })();
   </script>
 </body>
