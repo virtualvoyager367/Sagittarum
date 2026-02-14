@@ -164,6 +164,15 @@ form.onsubmit=function(e){
       rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">'+(res1.raw||'')+'</pre>';
       rw.style.display='block';
 
+      // Treat specific duplicate-account phrase as email already in use
+      if((res1.raw||'').toLowerCase().indexOf('account already created')!==-1){
+        rf.srcdoc='<pre style="margin:0;padding:1rem;font-family:monospace">An account already exists with this email. Try signing in instead.</pre>';
+        rw.style.display='block';
+        btn.disabled=false;
+        btn.textContent='Sign up';
+        return Promise.reject(new Error('Account already exists'));
+      }
+
       if(!res1.ok){
         btn.disabled=false;
         btn.textContent='Sign up';
