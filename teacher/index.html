@@ -33,7 +33,7 @@ input,textarea{font-family:inherit;padding:.75rem;border:2px solid var(--color-g
 </head>
 <body>
   <nav class="navbar">
-    <a href="../" class="navbar__title">Sagittarum</a>
+    <a href="#" class="navbar__title" id="navBrand">Sagittarum</a>
     <div><span id="navUser"></span> <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Logout</button></div>
   </nav>
   <main id="appContent" class="page-content"></main>
@@ -49,6 +49,7 @@ var session=window.Sagittarum.session,mock=window.Sagittarum.mockData,user=sessi
 if(!user||user.role!=='teacher'){location.href='../';return}
 document.getElementById('navUser').textContent=user.name+' (teacher)';
 document.getElementById('logoutBtn').onclick=function(){session.clearSession();location.href='../'};
+document.getElementById('navBrand').onclick=function(e){e.preventDefault();var u=session.getCurrentUser();if(!u){location.href='../signin/';return}location.href=u.role==='teacher'?'../teacher/':'../student/'};
 function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
 function render(){var hash=(location.hash||'#').slice(1),parts=hash?hash.split('/'):[],c=document.getElementById('appContent');
 if(parts[0]==='assignment'&&parts[2]==='review'){renderReview(c,parts[1])}else if(parts[0]==='assignment'&&parts[1]==='create'){renderCreate(c)}else if(parts[0]==='classroom'){renderClassroom(c,parts[1])}else if(parts[0]==='classrooms'){renderList(c)}else{renderDash(c)}}
