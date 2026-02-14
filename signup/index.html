@@ -106,7 +106,7 @@ window.Sagittarum.auth={
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        username:e.split('@')[0],
+        username:(n||'').trim(),
         email:e,
         password:p,
         role:r
@@ -189,7 +189,7 @@ form.onsubmit=function(e){
       var token=(res2.raw||'').trim();
       var user={
         id:'',
-        username:em.split('@')[0],
+        username:(n||'').trim(),
         email:em,
         role:ac==='teacher'?'teacher':'student',
         name:(n||'').trim(),
