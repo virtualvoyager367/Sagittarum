@@ -41,7 +41,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 </head>
 <body>
   <nav class="navbar">
-    <a href="../" class="navbar__title">Sagittarum</a>
+    <a href="#" class="navbar__title" id="navBrand">Sagittarum</a>
     <div><span id="navUser"></span> <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Logout</button></div>
   </nav>
   <main id="appContent" class="page-content"></main>
@@ -59,6 +59,7 @@ var session=window.Sagittarum.session,mock=window.Sagittarum.mockData,user=sessi
 if(!user||user.role!=='student'){location.href='../';return}
 document.getElementById('navUser').textContent=user.name+' (student)';
 document.getElementById('logoutBtn').onclick=function(){session.clearSession();location.href='../'};
+document.getElementById('navBrand').onclick=function(e){e.preventDefault();var u=session.getCurrentUser();if(!u){location.href='../signin/';return}location.href=u.role==='teacher'?'../teacher/':'../student/'};
 var submitted=JSON.parse(sessionStorage.getItem('sagittarum_submitted')||'[]');
 function markSub(id){if(submitted.indexOf(id)===-1){submitted.push(id);sessionStorage.setItem('sagittarum_submitted',JSON.stringify(submitted))}}
 function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
