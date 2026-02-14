@@ -124,6 +124,7 @@ window.Sagittarum.auth={
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         username:e.split('@')[0],
+        email:e,
         password:p
       })
     }).then(function(resp){return resp.text().then(function(text){
