@@ -3,47 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sagittarum - AI Grading Platform</title>
+  <title>Teacher Dashboard - Sagittarum</title>
   <style>
-:root{--primary-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 100%);--color-primary:#667eea;--color-secondary:#764ba2;--color-text:#1f2937;--color-text-light:#6b7280;--color-white:#fff;--radius-lg:.75rem;--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,.1)}
+:root{--primary-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 100%);--color-primary:#667eea;--color-text:#1f2937;--color-text-light:#6b7280;--color-white:#fff;--color-gray-100:#f3f4f6;--color-gray-200:#e5e7eb;--radius-lg:.75rem;--shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--shadow-xl:0 20px 25px -5px rgba(0,0,0,.1)}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);color:var(--color-text);line-height:1.7;min-height:100vh}
-a{color:var(--color-primary);text-decoration:none}
-a:hover{text-decoration:underline}
-.company-page{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;position:relative;text-align:center}
-.company-page__bg{position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(102,126,234,.15) 0%,transparent 50%),radial-gradient(ellipse at bottom right,rgba(245,87,108,.15) 0%,transparent 50%);z-index:0}
-.company-page__content{position:relative;z-index:1;max-width:640px}
-.company-page__logo{background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:3.5rem;font-weight:700;margin-bottom:0.5rem}
-.company-page__tagline{color:var(--color-text-light);font-size:1.25rem;margin-bottom:2rem}
-.company-page__about{margin-bottom:2rem;text-align:left}
-.company-page__about h2{font-size:1.5rem;margin-bottom:1rem;color:var(--color-text)}
-.company-page__about p{margin-bottom:1rem;color:var(--color-text);font-size:1.05rem}
-.company-page__buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2rem}
-.btn{font-weight:600;border-radius:var(--radius-lg);padding:0.75rem 1.5rem;cursor:pointer;text-decoration:none;display:inline-block;transition:transform .2s;border:none;font-size:1rem}
-.btn-primary{background:var(--primary-gradient);color:var(--color-white);box-shadow:var(--shadow-lg)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:var(--shadow-xl)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);color:var(--color-text);min-height:100vh}
+a{color:var(--color-primary)}
+button{font-family:inherit;cursor:pointer;border:none}
+.card{background:var(--color-white);border-radius:1rem;padding:1.5rem;box-shadow:var(--shadow-lg);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-xl)}
+.btn{font-weight:600;border-radius:var(--radius-lg);padding:.75rem;cursor:pointer;background:var(--primary-gradient);color:var(--color-white)}
 .btn-outline{background:transparent;color:var(--color-primary);border:2px solid var(--color-primary)}
-.btn-outline:hover{background:var(--color-primary);color:var(--color-white);transform:translateY(-2px)}
+.btn-sm{padding:.375rem .75rem;font-size:.875rem}
+.navbar{background:var(--color-white);box-shadow:0 4px 6px rgba(0,0,0,.1);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+.navbar__title{background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:1.75rem;font-weight:700;text-decoration:none}
+.page-content{padding:1.5rem;max-width:1200px;margin:0 auto}
+.page-content__header{margin-bottom:2rem;text-align:center}
+.page-content__title{background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:2rem}
+.dashboard-grid,.classroom-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem}
+.dashboard-card__title,.classroom-detail__student-name,.classroom-detail__assignment-name{font-size:1.25rem;font-weight:600}
+.dashboard-card__desc{color:var(--color-text-light);font-size:.875rem}
+.classroom-detail__section{margin-bottom:1.5rem}
+.classroom-detail__student,.classroom-detail__assignment{padding:.75rem;background:var(--color-gray-100);border-radius:var(--radius-lg);margin-bottom:.5rem}
+.classroom-detail__student-email{font-size:.875rem;color:var(--color-text-light)}
+.back-btn{margin-bottom:1rem;color:var(--color-primary);font-weight:500}
+.review-submission{font-family:monospace;font-size:.875rem;white-space:pre-wrap;background:var(--color-gray-100);padding:1rem;border-radius:var(--radius-lg)}
+input,textarea{font-family:inherit;padding:.75rem;border:2px solid var(--color-gray-200);border-radius:var(--radius-lg);width:100%}
   </style>
 </head>
 <body>
-  <div class="company-page">
-    <div class="company-page__bg"></div>
-    <div class="company-page__content">
-      <h1 class="company-page__logo">Sagittarum</h1>
-      <p class="company-page__tagline">AI-Powered Grading for Educators and Students</p>
-      <div class="company-page__about">
-        <h2>About Sagittarum</h2>
-        <p>Sagittarum is a local-first AI grading platform designed to help teachers save time and help students learn faster. Teachers create assignments and classrooms; students submit work and receive instant AI-powered feedback with detailed explanations.</p>
-        <h2>What We Do</h2>
-        <p><strong>For Teachers:</strong> Create classrooms, design assignments with custom grading criteria, and review student submissions with AI-generated explanations and breakdowns.</p>
-        <p><strong>For Students:</strong> View your classes, complete assignments, get graded instantly, and use the "Discuss Mistakes" feature to understand your errors with AI teacher and student explanations.</p>
-      </div>
-      <div class="company-page__buttons">
-        <a href="signin/" class="btn btn-primary">Sign in</a>
-        <a href="signup/" class="btn btn-outline">Sign up</a>
-      </div>
-    </div>
-  </div>
+  <nav class="navbar">
+    <a href="#" class="navbar__title" id="navBrand">Sagittarum</a>
+    <div><span id="navUser"></span> <button type="button" class="btn btn-outline btn-sm" id="logoutBtn">Logout</button></div>
+  </nav>
+  <main id="appContent" class="page-content"></main>
+  <script>
+(function(){
+var SK='sagittarum_session';
+window.Sagittarum=window.Sagittarum||{};
+window.Sagittarum.session={getCurrentUser:function(){try{var s=localStorage.getItem(SK);if(!s)return null;var d=JSON.parse(s);if(Date.now()>d.expiresAt){localStorage.removeItem(SK);return null}return d.user}catch(e){return null}},clearSession:function(){localStorage.removeItem(SK)}};
+var mockTeacherClassrooms=[{id:'class_1',name:'Introduction to Computer Science',studentCount:25,assignmentCount:3,students:[{id:'s1',name:'Alice Johnson',email:'alice@example.com'},{id:'s2',name:'Bob Smith',email:'bob@example.com'}],assignments:[{id:'assign_1',title:'Binary Search Implementation',submissions:20,graded:18},{id:'assign_2',title:'Sorting Algorithms Analysis',submissions:15,graded:12}]}];
+var mockSubmissionResults={assign_1:{submission:'function binarySearch(arr, target) {\n  let left = 0;\n  let right = arr.length - 1;\n  while (left <= right) {\n    const mid = Math.floor((left + right) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) left = mid + 1;\n    else right = mid - 1;\n  }\n  return -1;\n}',score:85,maxScore:100,aiTeacherExplanation:'Good implementation of binary search. Minor deduction for not including input validation.',aiStudentExplanation:'Your binary search implementation is correct! Consider adding input validation.'}};
+window.Sagittarum.mockData={getTeacherClassrooms:function(){return mockTeacherClassrooms},getSubmissionResult:function(i){return mockSubmissionResults[i]||null}};
+var session=window.Sagittarum.session,mock=window.Sagittarum.mockData,user=session.getCurrentUser();
+if(!user||user.role!=='teacher'){location.href='../';return}
+document.getElementById('navUser').textContent=user.name+' (teacher)';
+document.getElementById('logoutBtn').onclick=function(){session.clearSession();location.href='../'};
+document.getElementById('navBrand').onclick=function(e){e.preventDefault();var u=session.getCurrentUser();if(!u){location.href='../signin/';return}location.href=u.role==='teacher'?'../teacher/':'../student/'};
+function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function render(){var hash=(location.hash||'#').slice(1),parts=hash?hash.split('/'):[],c=document.getElementById('appContent');
+if(parts[0]==='assignment'&&parts[2]==='review'){renderReview(c,parts[1])}else if(parts[0]==='assignment'&&parts[1]==='create'){renderCreate(c)}else if(parts[0]==='classroom'){renderClassroom(c,parts[1])}else if(parts[0]==='classrooms'){renderList(c)}else{renderDash(c)}}
+function renderDash(c){var cards=[{title:'Create Classroom',hash:'#classroom/create'},{title:'View Classrooms',hash:'#classrooms'},{title:'Create Assignment',hash:'#assignment/create'},{title:'Analytics',hash:'#analytics'}];c.innerHTML='<div class="page-content__header"><h1 class="page-content__title">Sagittarum</h1><p>Teacher Dashboard</p></div><div class="dashboard-grid">'+cards.map(function(x){return'<div class="card dashboard-card" data-hash="'+x.hash+'"><div class="dashboard-card__title">'+esc(x.title)+'</div><div class="dashboard-card__desc">Click to open</div></div>'}).join('')+'</div>';c.querySelectorAll('.dashboard-card').forEach(function(el){el.onclick=function(){var h=el.dataset.hash;if(h==='#analytics'||h==='#classroom/create'){c.innerHTML='<div class="card"><h2>Coming soon</h2></div>'}else{location.hash=h.slice(1)}}})}
+function renderList(c){var cls=mock.getTeacherClassrooms();c.innerHTML='<div style="display:flex;justify-content:space-between;margin-bottom:1.5rem"><div><h1>My Classrooms</h1></div></div><div class="classroom-grid">'+cls.map(function(x){return'<div class="card classroom-card" data-id="'+x.id+'"><div class="dashboard-card__title">'+esc(x.name)+'</div><div class="dashboard-card__desc">'+x.studentCount+' students, '+x.assignmentCount+' assignments</div></div>'}).join('')+'</div>';c.querySelectorAll('.classroom-card').forEach(function(el){el.onclick=function(){location.hash='#classroom/'+el.dataset.id}})}
+function renderClassroom(c,id){var cls=mock.getTeacherClassrooms().filter(function(x){return x.id===id})[0];if(!cls){c.innerHTML='<div class="card"><p>Not found.</p><a href="#classrooms">Back</a></div>';return}var sh=cls.students.map(function(s){return'<div class="classroom-detail__student"><div class="classroom-detail__student-name">'+esc(s.name)+'</div><div class="classroom-detail__student-email">'+esc(s.email)+'</div></div>'}).join(''),ah=cls.assignments.map(function(a){return'<div class="classroom-detail__assignment" style="display:flex;justify-content:space-between;align-items:center"><div><div class="classroom-detail__assignment-name">'+esc(a.title)+'</div><span style="font-size:.875rem">'+a.submissions+' submissions, '+a.graded+' graded</span></div><a href="#assignment/'+a.id+'/review" class="btn btn-outline btn-sm">Review</a></div>'}).join('');c.innerHTML='<button class="back-btn" id="b1">&larr; Back</button><div class="card" style="margin-bottom:1.5rem;text-align:center"><h1>'+esc(cls.name)+'</h1></div><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem"><div class="card classroom-detail__section"><h2>Students</h2>'+sh+'</div><div class="card classroom-detail__section"><h2>Assignments</h2>'+ah+'</div></div>';document.getElementById('b1').onclick=function(){location.hash='#classrooms'}}
+function renderCreate(c){c.innerHTML='<button class="back-btn" id="b1">&larr; Back</button><div class="card" style="max-width:600px"><h1>Create Assignment</h1><form id="af"><div style="margin-bottom:1rem"><label style="display:block;font-weight:600;margin-bottom:.25rem">Title</label><input type="text" id="at" required /></div><div style="margin-bottom:1rem"><label style="display:block;font-weight:600;margin-bottom:.25rem">Total Points</label><input type="number" id="ap" required min="1" /></div><div style="margin-bottom:1rem"><label style="display:block;font-weight:600;margin-bottom:.25rem">Instructions</label><textarea id="ai" rows="5" required></textarea></div><button type="submit" class="btn">Create</button></form></div>';document.getElementById('b1').onclick=function(){location.hash=''};document.getElementById('af').onsubmit=function(e){e.preventDefault();alert('Assignment created! (Demo)');location.hash=''}}
+function renderReview(c,assignId){var r=mock.getSubmissionResult(assignId);if(!r){c.innerHTML='<div class="card"><p>No submissions.</p><a href="#classrooms">Back</a></div>';return}var pct=Math.round((r.score/r.maxScore)*100);c.innerHTML='<button class="back-btn" id="b1">&larr; Back</button><div class="card" style="margin-bottom:1.5rem;text-align:center"><h1>Assignment Review</h1><p>Student: Alice Johnson</p></div><div class="card" style="margin-bottom:1.5rem"><h2>Submission</h2><pre class="review-submission">'+esc(r.submission)+'</pre></div><div class="card" style="margin-bottom:1.5rem;text-align:center"><div style="font-size:3rem;font-weight:700;background:var(--primary-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent">'+r.score+' / '+r.maxScore+'</div><div>'+pct+'%</div></div><div class="card" style="margin-bottom:1.5rem"><h2>AI Teacher Explanation</h2><p>'+esc(r.aiTeacherExplanation)+'</p></div><div class="card"><h2>AI Student Explanation</h2><p>'+esc(r.aiStudentExplanation)+'</p></div>';document.getElementById('b1').onclick=function(){location.hash='#classrooms'}}
+window.onhashchange=render;render();
+})();
+  </script>
 </body>
 </html>
